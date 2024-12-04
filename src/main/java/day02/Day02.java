@@ -24,27 +24,52 @@ public class Day02 {
 
         int safeCount = 0;
         for (List<Integer> report : reports) {
-            boolean isDecreasing = false;
-            boolean isIncreasing = false;
-            boolean isValid = true;
-            for (int j = 0; j < report.size() - 1; j++) {
-                if (report.get(j) > report.get(j + 1)) {
-                    isDecreasing = true;
-                }
-                if (report.get(j) < report.get(j + 1)) {
-                    isIncreasing = true;
-                }
-                int diff = Math.abs(report.get(j) - report.get(j + 1));
-                if ((diff < 1 || diff > 3) || (isDecreasing && isIncreasing)) {
-                    isValid = false;
-                    break;
+
+            boolean isValid = isValidReport(report);
+
+            // Handle the Problem Dampener
+            if (!isValid) {
+                List<Integer> copyReport = new ArrayList<>(report);
+
+                for (int i = 0; i < copyReport.size(); i++) {
+                    int actual = copyReport.remove(i);
+                    boolean isValidCopy = false;
+                    for (int j = 0; j < copyReport.size() - 1; j++) {
+                        isValidCopy = isValidReport(copyReport);
+                    }
+                    if (isValidCopy) {
+                        isValid = true;
+                        break;
+                    }
+                    copyReport.add(i, actual);
                 }
             }
+
             if (isValid) {
                 safeCount++;
             }
         }
 
         System.out.println(safeCount + " reports are safe");
+    }
+
+    private static boolean isValidReport(List<Integer> report) {
+        boolean isDecreasing = false;
+        boolean isIncreasing = false;
+        boolean isValid = true;
+        for (int j = 0; j < report.size() - 1; j++) {
+            if (report.get(j) > report.get(j + 1)) {
+                isDecreasing = true;
+            }
+            if (report.get(j) < report.get(j + 1)) {
+                isIncreasing = true;
+            }
+            int diff = Math.abs(report.get(j) - report.get(j + 1));
+            if ((diff < 1 || diff > 3) || (isDecreasing && isIncreasing)) {
+                isValid = false;
+                break;
+            }
+        }
+        return isValid;
     }
 }
